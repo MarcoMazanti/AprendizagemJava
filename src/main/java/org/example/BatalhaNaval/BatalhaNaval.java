@@ -3,20 +3,35 @@ package org.example.BatalhaNaval;
 import java.util.Scanner;
 
 public class BatalhaNaval {
-    int i = 0, j = 0;
+    private int i = 0, j = 0;
+    public int dificuldade = 0;
+
+    private int[][] jogador = new int[5][10];
 
     public void batalhaNaval() {
         Scanner scan = new Scanner(System.in);
+        Inimigo enemy = new Inimigo();
 
         String direcao;
         int linha, coluna, tipo, repetir = 0, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2;
-        int[][] jogador = new int[5][10];
+        int[][] inimigo = new int[5][10];
 
         for(i = 0; i < 5; i++) {
             for(j = 0; j < 10; j++) {
                 jogador[i][j] = 0;
             }
         }
+
+        enemy.Enemy(dificuldade);
+
+        System.out.println("DIFICULDADE");
+        System.out.println("1 - Fácil");
+        System.out.println("2 - Médio");
+        System.out.println("3 - Dificil");
+        System.out.println("OBS: Por favor, escolha o 1, só tem ele :)");
+        System.out.print("Digite a dificuldade: ");
+        dificuldade = scan.nextInt();
+        System.out.println();
 
         leitura(jogador);
 
@@ -162,6 +177,33 @@ public class BatalhaNaval {
 
             leitura(jogador);
         }
+
+        System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
+
+        System.out.printf("%nSeus Navios%n");
+        leitura(jogador);
+        System.out.printf("Inimigos%n");
+        leitura(inimigo);
+
+        System.out.println("Digite o local onde deseja atacar: ");
+        do {
+            if(repetir == 1) {
+                System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+            }
+            repetir = 0;
+
+            System.out.print("Linha (1 - 5): ");
+            linha = scan.nextInt();
+            System.out.print("Coluna (1 - 10): ");
+            coluna = scan.nextInt();
+
+            if(linha < 1 || linha > 5 || coluna < 1 || coluna > 10) {
+                repetir = 1;
+            }
+        } while(repetir == 1);
+        linha--;
+        coluna--;
+
     }
 
     //passa a matriz int[][] mapa para a formatação que será apresentada na tela
