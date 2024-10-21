@@ -22,7 +22,8 @@ public class BatalhaNaval {
             }
         }
 
-        enemy.Enemy(dificuldade);
+        enemy.Criacao();
+        leitura(enemy.getInimigo());
 
         System.out.println("DIFICULDADE");
         System.out.println("1 - Fácil");
