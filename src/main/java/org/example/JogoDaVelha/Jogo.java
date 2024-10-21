@@ -8,7 +8,7 @@ public class Jogo {
     public void jogoDaVelha() {
         Scanner scan = new Scanner(System.in);
 
-        int vitoria = 0, coluna = 0, linha = 0, jogador = 0, tamanho = 3;
+        int vitoria, coluna = 0, linha = 0, jogador = 0, tamanho = 3;
 
         System.out.println();
         do {
