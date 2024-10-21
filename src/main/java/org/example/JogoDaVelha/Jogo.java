@@ -85,6 +85,9 @@ public class Jogo {
             mapa[2 * linha][2 * coluna] = jogador;
             vitoria = vitoria(jogo, jogador);
         } while(vitoria != 1);
+
+        leitura(mapa);
+        System.out.printf("O jogador %d venceu!!!%n", jogador);
     }
 
     private int vitoria(int[][] jogo, int jogador) {
