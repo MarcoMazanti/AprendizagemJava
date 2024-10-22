@@ -4,8 +4,10 @@ import java.util.Random;
 
 public class Inimigo {
     Random random = new Random();
-    private int[][] inimigo = new int[5][10];
-    private int repetir = 0;
+
+    private int[][] inimigo = new int[5][10]; // local onde armazena os locais dos navios do inimigo
+    private int[][] guerra = new int[5][10]; // local onde armazena os locais dos navios do jogador para conferir o acerto
+    private int repetir = 0, linha = 0, coluna = 0;
 
     public int[][] getInimigo() {
         return inimigo;
@@ -13,6 +15,14 @@ public class Inimigo {
 
     public void setInimigo(int[][] inimigo) {
         this.inimigo = inimigo;
+    }
+
+    public int[][] getGuerra() {
+        return guerra;
+    }
+
+    public void setGuerra(int[][] guerra) {
+        this.guerra = guerra;
     }
 
     public void Enemy(int dificuldade) {
@@ -28,8 +38,37 @@ public class Inimigo {
                 break;
         }
     }
+    private void Facil() {
+        do {
+            repetir = 0;
+            linha = random.nextInt(5);
+            coluna = random.nextInt(10);
 
-    //consertar, está bugando tudo
+            if(guerra[linha][coluna] == 0) {
+                guerra[linha][coluna] = 8;
+            } else if(guerra[linha][coluna] == 1 ||
+                    guerra[linha][coluna] == 2 ||
+                    guerra[linha][coluna] == 3 ||
+                    guerra[linha][coluna] == 4 ||
+                    guerra[linha][coluna] == 5 ||
+                    guerra[linha][coluna] == 6)
+            {
+                guerra[linha][coluna] = 7;
+            } else {
+                repetir = 1;
+            }
+        } while(repetir == 1);
+
+    }
+
+    private void Medio() {
+
+    }
+
+    private void Dificil() {
+
+    }
+
     public void Criacao() {
         int linha, coluna, tipo, direcao, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2;
 
@@ -124,16 +163,4 @@ public class Inimigo {
         }
     }
 
-    private void Facil() {
-
-
-    }
-
-    private void Medio() {
-
-    }
-
-    private void Dificil() {
-
-    }
 }

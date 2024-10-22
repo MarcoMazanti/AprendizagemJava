@@ -6,15 +6,19 @@ public class BatalhaNaval {
     private int i = 0, j = 0;
     public int dificuldade = 0;
 
-    private int[][] jogador = new int[5][10];
+    private int[][] jogador = new int[5][10]; // o que vai aparecer na tela
+
 
     public void batalhaNaval() {
         Scanner scan = new Scanner(System.in);
         Inimigo enemy = new Inimigo();
+        enemy.Criacao();
 
         String direcao;
         int linha, coluna, tipo, repetir = 0, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2;
-        int[][] inimigo = new int[5][10];
+
+        int[][] inimigo = new int[5][10]; // o que vai aparecer na tela o local de acertos
+        int[][] guerra = enemy.getInimigo(); // apenas para conferir se acertou um local permitido
 
         for(i = 0; i < 5; i++) {
             for(j = 0; j < 10; j++) {
@@ -22,7 +26,6 @@ public class BatalhaNaval {
             }
         }
 
-        enemy.Criacao();
         leitura(enemy.getInimigo());
 
         System.out.println("DIFICULDADE");
@@ -179,32 +182,60 @@ public class BatalhaNaval {
             leitura(jogador);
         }
 
+        enemy.setGuerra(jogador);
+
         System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
 
-        System.out.printf("%nSeus Navios%n");
+        System.out.printf("%nSeus Navios");
         leitura(jogador);
-        System.out.printf("Inimigos%n");
+        System.out.print("Inimigos");
         leitura(inimigo);
 
         System.out.println("Digite o local onde deseja atacar: ");
         do {
             if(repetir == 1) {
-                System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                System.out.println("Você digitou uma casa já atingida! Tente novamente.");
             }
             repetir = 0;
 
-            System.out.print("Linha (1 - 5): ");
-            linha = scan.nextInt();
-            System.out.print("Coluna (1 - 10): ");
-            coluna = scan.nextInt();
+            do {
+                if(repetir == 1) {
+                    System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                }
+                repetir = 0;
 
-            if(linha < 1 || linha > 5 || coluna < 1 || coluna > 10) {
+                System.out.print("Linha (1 - 5): ");
+                linha = scan.nextInt();
+                System.out.print("Coluna (1 - 10): ");
+                coluna = scan.nextInt();
+
+                if(linha < 1 || linha > 5 || coluna < 1 || coluna > 10) {
+                    repetir = 1;
+                }
+            } while(repetir == 1);
+            linha--;
+            coluna--;
+
+            if(guerra[linha][coluna] == 0) {
+                guerra[linha][coluna] = 8;
+            } else if(guerra[linha][coluna] == 1 ||
+                    guerra[linha][coluna] == 2 ||
+                    guerra[linha][coluna] == 3 ||
+                    guerra[linha][coluna] == 4 ||
+                    guerra[linha][coluna] == 5 ||
+                    guerra[linha][coluna] == 6)
+            {
+                inimigo[linha][coluna] = 7;
+            } else {
                 repetir = 1;
             }
         } while(repetir == 1);
-        linha--;
-        coluna--;
 
+        System.out.printf("%nSeus Navios");
+        enemy.Enemy(dificuldade);
+        leitura(enemy.getGuerra());
+        System.out.print("Inimigos");
+        leitura(inimigo);
     }
 
     //passa a matriz int[][] mapa para a formatação que será apresentada na tela
