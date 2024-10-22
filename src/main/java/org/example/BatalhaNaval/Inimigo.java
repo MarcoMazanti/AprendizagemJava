@@ -7,7 +7,7 @@ public class Inimigo {
 
     private int[][] inimigo = new int[5][10]; // local onde armazena os locais dos navios do inimigo
     private int[][] guerra = new int[5][10]; // local onde armazena os locais dos navios do jogador para conferir o acerto
-    private int repetir = 0, linha = 0, coluna = 0;
+    private int repetir = 0, linha = 0, coluna = 0, pontuacao = 0;
 
     public int[][] getInimigo() {
         return inimigo;
@@ -23,6 +23,10 @@ public class Inimigo {
 
     public void setGuerra(int[][] guerra) {
         this.guerra = guerra;
+    }
+
+    public int getPontuacao() {
+        return pontuacao;
     }
 
     public void Enemy(int dificuldade) {
@@ -54,7 +58,8 @@ public class Inimigo {
                     guerra[linha][coluna] == 6)
             {
                 guerra[linha][coluna] = 7;
-            } else {
+                pontuacao++;
+            } else if(guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
                 repetir = 1;
             }
         } while(repetir == 1);

@@ -15,7 +15,7 @@ public class BatalhaNaval {
         enemy.Criacao();
 
         String direcao;
-        int linha, coluna, tipo, repetir = 0, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2;
+        int linha, coluna, tipo, repetir = 0, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2, pontuacao = 0, vitoria = 0;
 
         int[][] inimigo = new int[5][10]; // o que vai aparecer na tela o local de acertos
         int[][] guerra = enemy.getInimigo(); // apenas para conferir se acertou um local permitido
@@ -26,7 +26,7 @@ public class BatalhaNaval {
             }
         }
 
-        leitura(enemy.getInimigo());
+        leitura(enemy.getInimigo(), enemy.getPontuacao());
 
         System.out.println("DIFICULDADE");
         System.out.println("1 - Fácil");
@@ -37,7 +37,7 @@ public class BatalhaNaval {
         dificuldade = scan.nextInt();
         System.out.println();
 
-        leitura(jogador);
+        leitura(jogador, pontuacao);
 
         //roda até a pessoa colocar todos os navios
         while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0) {
@@ -179,7 +179,7 @@ public class BatalhaNaval {
                 }
             } while(repetir == 1);
 
-            leitura(jogador);
+            leitura(jogador, pontuacao);
         }
 
         enemy.setGuerra(jogador);
@@ -187,59 +187,72 @@ public class BatalhaNaval {
         System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
 
         System.out.printf("%nSeus Navios");
-        leitura(jogador);
+        leitura(jogador, pontuacao);
         System.out.print("Inimigos");
-        leitura(inimigo);
+        leitura(inimigo, enemy.getPontuacao());
 
-        System.out.println("Digite o local onde deseja atacar: ");
-        do {
-            if(repetir == 1) {
-                System.out.println("Você digitou uma casa já atingida! Tente novamente.");
-            }
-            repetir = 0;
 
+        // bugado e por que eu não sei
+        while(vitoria == 0) {
+            System.out.println("Digite o local onde deseja atacar: ");
             do {
                 if(repetir == 1) {
-                    System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                    System.out.println("Você digitou uma casa já atingida! Tente novamente.");
                 }
                 repetir = 0;
 
-                System.out.print("Linha (1 - 5): ");
-                linha = scan.nextInt();
-                System.out.print("Coluna (1 - 10): ");
-                coluna = scan.nextInt();
+                do {
+                    if(repetir == 1) {
+                        System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                    }
+                    repetir = 0;
 
-                if(linha < 1 || linha > 5 || coluna < 1 || coluna > 10) {
+                    System.out.print("Linha (1 - 5): ");
+                    linha = scan.nextInt();
+                    System.out.print("Coluna (1 - 10): ");
+                    coluna = scan.nextInt();
+
+                    if(linha < 1 || linha > 5 || coluna < 1 || coluna > 10) {
+                        repetir = 1;
+                    }
+                } while(repetir == 1);
+                linha--;
+                coluna--;
+
+                // BUGADO ARRUMAR!!!!!!!!!!
+                if(guerra[linha][coluna] == 0) {
+                    guerra[linha][coluna] = 8;
+                } else if(guerra[linha][coluna] == 1 ||
+                        guerra[linha][coluna] == 2 ||
+                        guerra[linha][coluna] == 3 ||
+                        guerra[linha][coluna] == 4 ||
+                        guerra[linha][coluna] == 5 ||
+                        guerra[linha][coluna] == 6)
+                {
+                    inimigo[linha][coluna] = 7;
+                    pontuacao++;
+                } else if(guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
                     repetir = 1;
                 }
             } while(repetir == 1);
-            linha--;
-            coluna--;
 
-            if(guerra[linha][coluna] == 0) {
-                guerra[linha][coluna] = 8;
-            } else if(guerra[linha][coluna] == 1 ||
-                    guerra[linha][coluna] == 2 ||
-                    guerra[linha][coluna] == 3 ||
-                    guerra[linha][coluna] == 4 ||
-                    guerra[linha][coluna] == 5 ||
-                    guerra[linha][coluna] == 6)
-            {
-                inimigo[linha][coluna] = 7;
-            } else {
-                repetir = 1;
+            System.out.printf("%nSeus Navios");
+            enemy.Enemy(dificuldade);
+            leitura(enemy.getGuerra(), pontuacao);
+            System.out.print("Inimigos");
+            leitura(inimigo, enemy.getPontuacao());
+
+            vitoria = vitoria(pontuacao, enemy.getPontuacao());
+            if(vitoria == 1) {
+                System.out.println("VOCÊ GANHOU!!!");
+            } else if(vitoria == 2) {
+                System.out.println("INIMIGO GANHOU!!!");
             }
-        } while(repetir == 1);
-
-        System.out.printf("%nSeus Navios");
-        enemy.Enemy(dificuldade);
-        leitura(enemy.getGuerra());
-        System.out.print("Inimigos");
-        leitura(inimigo);
+        }
     }
 
     //passa a matriz int[][] mapa para a formatação que será apresentada na tela
-    private void leitura(int[][] mapa) {
+    private void leitura(int[][] mapa, int ponto) {
         char caractere = ' ';
 
         System.out.println();
@@ -275,6 +288,7 @@ public class BatalhaNaval {
             }
             System.out.println();
         }
+        System.out.printf("Pontuação: %d%n", ponto);
         System.out.println();
 
         /*
@@ -302,5 +316,17 @@ public class BatalhaNaval {
         15 - "█" alt + 219
         16 - "▼" alt + 31
          */
+    }
+
+    private int vitoria(int ponto1, int ponto2) {
+        int pontuacaoMax = 25;
+
+        if(ponto1 == pontuacaoMax) {
+            return 1;
+        } else if(ponto2 == pontuacaoMax) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 }
