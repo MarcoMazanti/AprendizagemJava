@@ -186,13 +186,11 @@ public class BatalhaNaval {
 
         System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
 
-        System.out.printf("%nSeus Navios");
-        leitura(jogador, pontuacao);
         System.out.print("Inimigos");
         leitura(inimigo, enemy.getPontuacao());
+        System.out.printf("%nSeus Navios");
+        leitura(jogador, pontuacao);
 
-
-        // bugado e por que eu não sei
         while(vitoria == 0) {
             System.out.println("Digite o local onde deseja atacar: ");
             do {
@@ -219,8 +217,8 @@ public class BatalhaNaval {
                 linha--;
                 coluna--;
 
-                // BUGADO ARRUMAR!!!!!!!!!!
                 if(guerra[linha][coluna] == 0) {
+                    inimigo[linha][coluna] = 8;
                     guerra[linha][coluna] = 8;
                 } else if(guerra[linha][coluna] == 1 ||
                         guerra[linha][coluna] == 2 ||
@@ -230,17 +228,20 @@ public class BatalhaNaval {
                         guerra[linha][coluna] == 6)
                 {
                     inimigo[linha][coluna] = 7;
+                    guerra[linha][coluna] = 7;
                     pontuacao++;
                 } else if(guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
                     repetir = 1;
                 }
             } while(repetir == 1);
 
-            System.out.printf("%nSeus Navios");
+            // inimigo ataca
             enemy.Enemy(dificuldade);
-            leitura(enemy.getGuerra(), pontuacao);
+
             System.out.print("Inimigos");
             leitura(inimigo, enemy.getPontuacao());
+            System.out.printf("%nSeus Navios");
+            leitura(enemy.getGuerra(), pontuacao);
 
             vitoria = vitoria(pontuacao, enemy.getPontuacao());
             if(vitoria == 1) {
@@ -251,7 +252,7 @@ public class BatalhaNaval {
         }
     }
 
-    //passa a matriz int[][] mapa para a formatação que será apresentada na tela
+    // passa a matriz int[][] mapa para a formatação que será apresentada na tela
     private void leitura(int[][] mapa, int ponto) {
         char caractere = ' ';
 
@@ -318,6 +319,7 @@ public class BatalhaNaval {
          */
     }
 
+    // verifica quem ganha a partir da quantidade de navios
     private int vitoria(int ponto1, int ponto2) {
         int pontuacaoMax = 25;
 
