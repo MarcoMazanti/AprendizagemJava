@@ -43,6 +43,7 @@ public class Inimigo {
         }
     }
     private void Facil() {
+        // ele randomiza os lugares que vai selecionar, não tendo ordem assim
         do {
             repetir = 0;
             linha = random.nextInt(5);
@@ -67,10 +68,21 @@ public class Inimigo {
     }
 
     private void Medio() {
+        // ele randomiza um local, mas ao achar um local com navio, ele vai rodar em volta procurando a outra parte até ir para os 4 sentidos, depois volta a randomizar
+        do {
+            repetir = 0;
+            linha = random.nextInt(5);
+            coluna = random.nextInt(10);
 
+
+        } while(repetir == 1);
     }
 
     private void Dificil() {
+        /*
+        ele randomiza um local, mas ao achar um local com navio, ele vai rodar em volta procurando a outra parte até ir para os 4 sentidos,
+        após isso ele procura o ponto mais longe dos outros acertos e seleciona ele
+         */
 
     }
 
