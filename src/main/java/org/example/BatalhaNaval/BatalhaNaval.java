@@ -253,7 +253,6 @@ public class BatalhaNaval {
 
             System.out.print("Inimigos");
             leitura(inimigo, enemy.getPontuacao());
-            System.out.println("linha: " + (enemy.ultimo[0] + 1) + " Coluna: " + (enemy.ultimo[1] + 1));
             System.out.printf("%nSeus Navios");
             leitura(enemy.getGuerra(), pontuacao);
 
