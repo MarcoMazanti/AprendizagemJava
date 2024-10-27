@@ -32,7 +32,7 @@ public class BatalhaNaval {
         System.out.println("1 - Fácil");
         System.out.println("2 - Médio");
         System.out.println("3 - Dificil");
-        System.out.println("OBS: Dificuldade 2 em desenvolvimento!");
+        System.out.println("OBS: Dificuldade 3 em desenvolvimento!");
         System.out.print("Digite a dificuldade: ");
         dificuldade = scan.nextInt();
         System.out.println();

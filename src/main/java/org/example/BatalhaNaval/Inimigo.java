@@ -79,30 +79,15 @@ public class Inimigo {
 
                 verificar(linha, coluna);
             } else {
-                if(ultimo[0] - 1 >= 0 && ultimo[0] <= 4) {
-                    verificar(ultimo[0] - 1, ultimo[1]);
-                } else if(ultimo[1] - 1 >= 0 && ultimo[1] <= 9) {
-                    verificar(ultimo[0], ultimo[1] - 1);
-                } else if(ultimo[1] >= 0 && ultimo[1] + 1 <= 9) {
-                    verificar(ultimo[0], ultimo[1] + 1);
-                } else if(ultimo[0] >= 0 && ultimo[0] + 1 <= 4) {
-                    verificar(ultimo[0] + 1, ultimo[1]);
-                } else {
-                    ultimo[0] = 15;
-                    ultimo[1] = 15;
-                    repetir = 1;
-                }
-
-                /*
                 if(ultimo[0] > 0 && ultimo[1] > 0 && ultimo[0] < 4 && ultimo[1] < 4) {
-                    if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) {
+                    if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
                         verificar(ultimo[0] - 1, ultimo[1]);
-                    } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) {
+                    } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
                         verificar(ultimo[0], ultimo[1] - 1);
-                    } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) {
-                        verificar(ultimo[0] + 1, ultimo[1]);
-                    } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) {
+                    } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
                         verificar(ultimo[0], ultimo[1] + 1);
+                    } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                        verificar(ultimo[0] + 1, ultimo[1]);
                     } else {
                         ultimo[0] = -1;
                         ultimo[1] = -1;
@@ -185,7 +170,7 @@ public class Inimigo {
                             ultimo[1] = -1;
                             repetir = 1;
                         }
-                    } else if(ultimo[1] == 9) {
+                    } else if(ultimo[1] == 9) { // coluna direita
                         if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
                             verificar(ultimo[0] - 1, ultimo[1]);
                         } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
@@ -199,7 +184,6 @@ public class Inimigo {
                         }
                     }
                 }
-                 */
             }
         } while(repetir == 1);
     }
