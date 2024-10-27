@@ -7,7 +7,8 @@ public class Inimigo {
 
     private int[][] inimigo = new int[5][10]; // local onde armazena os locais dos navios do inimigo
     private int[][] guerra = new int[5][10]; // local onde armazena os locais dos navios do jogador para conferir o acerto
-    private int repetir = 0, linha = 0, coluna = 0, pontuacao = 0;
+    public int[] ultimo = new int[2]; // salvará o último acerto para o modo médio
+    private int repetir = 0, linha = 0, coluna = 0, pontuacao = 0, inicio = 1;
 
     public int[][] getInimigo() {
         return inimigo;
@@ -30,6 +31,12 @@ public class Inimigo {
     }
 
     public void Enemy(int dificuldade) {
+        if(inicio == 1) {
+            ultimo[0] = 15; // linha
+            ultimo[1] = 15; // coluna
+            inicio = 0;
+        }
+
         switch (dificuldade) {
             case 1:
                 Facil();
@@ -49,18 +56,9 @@ public class Inimigo {
             linha = random.nextInt(5);
             coluna = random.nextInt(10);
 
-            if(guerra[linha][coluna] == 0) {
-                guerra[linha][coluna] = 8;
-            } else if(guerra[linha][coluna] == 1 ||
-                    guerra[linha][coluna] == 2 ||
-                    guerra[linha][coluna] == 3 ||
-                    guerra[linha][coluna] == 4 ||
-                    guerra[linha][coluna] == 5 ||
-                    guerra[linha][coluna] == 6)
-            {
-                guerra[linha][coluna] = 7;
-                pontuacao++;
-            } else if(guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
+            if(guerra[linha][coluna] != 7 || guerra[linha][coluna] != 8) {
+                verificar(linha, coluna);
+            } else {
                 repetir = 1;
             }
         } while(repetir == 1);
@@ -68,14 +66,161 @@ public class Inimigo {
     }
 
     private void Medio() {
-        // ele randomiza um local, mas ao achar um local com navio, ele vai rodar em volta procurando a outra parte até ir para os 4 sentidos, depois volta a randomizar
+        /*
+         ele randomiza um local, mas ao achar um local com navio, ele vai rodar em volta procurando a outra
+         parte até ir para os 4 sentidos, depois volta a randomizar
+         */
         do {
             repetir = 0;
-            linha = random.nextInt(5);
-            coluna = random.nextInt(10);
 
+            if((ultimo[0] < 0 && ultimo[1] < 0) || (ultimo[0] > 4 && ultimo[1] > 9)) {
+                linha = random.nextInt(5);
+                coluna = random.nextInt(10);
 
+                verificar(linha, coluna);
+            } else {
+                if(ultimo[0] - 1 >= 0 && ultimo[0] <= 4) {
+                    verificar(ultimo[0] - 1, ultimo[1]);
+                } else if(ultimo[1] - 1 >= 0 && ultimo[1] <= 9) {
+                    verificar(ultimo[0], ultimo[1] - 1);
+                } else if(ultimo[1] >= 0 && ultimo[1] + 1 <= 9) {
+                    verificar(ultimo[0], ultimo[1] + 1);
+                } else if(ultimo[0] >= 0 && ultimo[0] + 1 <= 4) {
+                    verificar(ultimo[0] + 1, ultimo[1]);
+                } else {
+                    ultimo[0] = 15;
+                    ultimo[1] = 15;
+                    repetir = 1;
+                }
+
+                /*
+                if(ultimo[0] > 0 && ultimo[1] > 0 && ultimo[0] < 4 && ultimo[1] < 4) {
+                    if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) {
+                        verificar(ultimo[0] - 1, ultimo[1]);
+                    } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) {
+                        verificar(ultimo[0], ultimo[1] - 1);
+                    } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) {
+                        verificar(ultimo[0] + 1, ultimo[1]);
+                    } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) {
+                        verificar(ultimo[0], ultimo[1] + 1);
+                    } else {
+                        ultimo[0] = -1;
+                        ultimo[1] = -1;
+                        repetir = 1;
+                    }
+                } else {
+                    if(ultimo[0] == 0 && ultimo[1] == 0) { // canto superior esquerdo
+                        if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
+                            verificar(ultimo[0], ultimo[1] + 1);
+                        } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                            verificar(ultimo[0] + 1, ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[0] == 0 && ultimo[1] == 9) { // canto superior direito
+                        if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
+                            verificar(ultimo[0], ultimo[1]);
+                        } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                            verificar(ultimo[0] + 1, ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[0] == 4 && ultimo[1] == 0) { // canto inferior esquerdo
+                        if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
+                            verificar(ultimo[0] - 1, ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
+                            verificar(ultimo[0], ultimo[1] + 1);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[0] == 4 && ultimo[1] == 9) { // canto inferior direito
+                        if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
+                            verificar(ultimo[0] - 1, ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
+                            verificar(ultimo[0], ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[0] == 0) { // linha superior
+                        if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
+                            verificar(ultimo[0], ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
+                            verificar(ultimo[0], ultimo[1] + 1);
+                        } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                            verificar(ultimo[0] + 1, ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[0] == 4) { // linha inferior
+                        if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
+                            verificar(ultimo[0] - 1, ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
+                            verificar(ultimo[0], ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
+                            verificar(ultimo[0], ultimo[1] + 1);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[1] == 0) { // coluna esquerda
+                        if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
+                            verificar(ultimo[0] - 1, ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] + 1] != 7 && guerra[ultimo[0]][ultimo[1] + 1] != 8) { // sentido leste
+                            verificar(ultimo[0], ultimo[1] + 1);
+                        } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                            verificar(ultimo[0] + 1, ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    } else if(ultimo[1] == 9) {
+                        if(guerra[ultimo[0] - 1][ultimo[1]] != 7 && guerra[ultimo[0] - 1][ultimo[1]] != 8) { // sentido norte
+                            verificar(ultimo[0] - 1, ultimo[1]);
+                        } else if(guerra[ultimo[0]][ultimo[1] - 1] != 7 && guerra[ultimo[0]][ultimo[1] - 1] != 8) { // sentido oeste
+                            verificar(ultimo[0], ultimo[1]);
+                        } else if(guerra[ultimo[0] + 1][ultimo[1]] != 7 && guerra[ultimo[0] + 1][ultimo[1]] != 8) { // sentido sul
+                            verificar(ultimo[0] + 1, ultimo[1]);
+                        } else {
+                            ultimo[0] = -1;
+                            ultimo[1] = -1;
+                            repetir = 1;
+                        }
+                    }
+                }
+                 */
+            }
         } while(repetir == 1);
+    }
+
+    private void verificar(int linha, int coluna) {
+        if(guerra[linha][coluna] == 0) {
+            guerra[linha][coluna] = 8;
+        } else if(guerra[linha][coluna] == 1 ||
+                guerra[linha][coluna] == 2 ||
+                guerra[linha][coluna] == 3 ||
+                guerra[linha][coluna] == 4 ||
+                guerra[linha][coluna] == 5 ||
+                guerra[linha][coluna] == 6)
+        {
+            guerra[linha][coluna] = 7;
+            ultimo[0] = linha;
+            ultimo[1] = coluna;
+            pontuacao++;
+        } else if(guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
+            repetir = 1;
+        }
     }
 
     private void Dificil() {
@@ -179,5 +324,4 @@ public class Inimigo {
             }
         }
     }
-
 }

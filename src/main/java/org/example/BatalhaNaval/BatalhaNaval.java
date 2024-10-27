@@ -1,21 +1,21 @@
 package org.example.BatalhaNaval;
 
+import java.util.Random;
 import java.util.Scanner;
 
 public class BatalhaNaval {
     private int i = 0, j = 0;
-    public int dificuldade = 0;
 
     private int[][] jogador = new int[5][10]; // o que vai aparecer na tela
-
+    private int linha, coluna, tipo, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2, repetir = 0;
 
     public void batalhaNaval() {
         Scanner scan = new Scanner(System.in);
         Inimigo enemy = new Inimigo();
         enemy.Criacao();
 
-        String direcao;
-        int linha, coluna, tipo, repetir = 0, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2, pontuacao = 0, vitoria = 0;
+        String direcao, response;
+        int pontuacao = 0, vitoria = 0, dificuldade;
 
         int[][] inimigo = new int[5][10]; // o que vai aparecer na tela o local de acertos
         int[][] guerra = enemy.getInimigo(); // apenas para conferir se acertou um local permitido
@@ -32,154 +32,167 @@ public class BatalhaNaval {
         System.out.println("1 - Fácil");
         System.out.println("2 - Médio");
         System.out.println("3 - Dificil");
-        System.out.println("OBS: Por favor, escolha o 1, só tem ele :)");
+        System.out.println("OBS: Dificuldade 2 em desenvolvimento!");
         System.out.print("Digite a dificuldade: ");
         dificuldade = scan.nextInt();
         System.out.println();
 
-        leitura(jogador, pontuacao);
+        do {
+            repetir = 0;
+            System.out.print("Deseja colocar manualmente os navios (sim/nao): ");
+            response = scan.next();
+            response = response.toLowerCase();
 
-        //roda até a pessoa colocar todos os navios
-        while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0) {
-            //verifica se a pessoa irá escrever o tipo de navio existente
-            do {
-                if(repetir == 1) {
-                    System.out.printf("%nVocê digitou um tipo de navio inexistente! Tente novamente.%n");
-                }
-                repetir = 0;
+            if(!response.equals("sim") && !response.equals("nao")) {
+                System.out.println();
+                System.out.println("Você digitou alguma coisa errada! Tente novamente.");
+                repetir = 1;
+            }
+        } while(repetir == 1);
 
-                System.out.println("TIPOS DE NAVIOS");
-                System.out.printf("1 - %dxNavio pequeno <>%n", quantNavioPequeno);
-                System.out.printf("2 - %dxNavio médio <=>%n", quantNavioMedio);
-                System.out.printf("3 - %dxNavio grande <==>%n", quantNavioGrande);
-                System.out.println("OBS: na hora de colocar um navio, será posto pela ponta, voltada para baixo ou para a direita.");
-
-                System.out.printf("%nDigite qual tipo irá utilizar: ");
-                tipo = scan.nextInt();
-                if(tipo < 1 || tipo > 3 || quantNavioPequeno == 0 && tipo == 1 || quantNavioMedio == 0 && tipo == 2 || quantNavioGrande == 0 && tipo == 3) {
-                    repetir = 1;
-                }
-            } while(repetir == 1);
-
-            //verifica se a pessoa vai escrever a direção corretamente
-            do {
-                if(repetir == 1) {
-                    System.out.printf("%nVocê digitou uma direção inexistente! Tente novamente.%n");
-                }
-                repetir = 0;
-
-                System.out.print("Digite a direção do navio (horizontal / vertical): ");
-                direcao = scan.next();
-                direcao = direcao.toLowerCase();
-
-                if(!direcao.equals("horizontal") && !direcao.equals("vertical")) {
-                    repetir = 1;
-                }
-            } while(repetir == 1);
-
-            //verifica se a pessoa escolheu um espaço suficiente para colocar o navio
-            do {
-                if(repetir == 1) {
-                    System.out.printf("%nNão houve espaço para colocar o navio! Tente novamente.%n");
-                }
-                repetir = 0;
-
-                //verifica se a pessoa escolheu uma casa que esteja dentro dos parâmetros da matriz int[5][10] jogador
+        if(response.equals("sim")) {
+            //roda até a pessoa colocar todos os navios
+            while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0) {
+                //verifica se a pessoa irá escrever o tipo de navio existente
                 do {
                     if(repetir == 1) {
-                        System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                        System.out.printf("%nVocê digitou um tipo de navio inexistente! Tente novamente.%n");
                     }
                     repetir = 0;
 
+                    System.out.println("TIPOS DE NAVIOS");
+                    System.out.printf("1 - %dxNavio pequeno <>%n", quantNavioPequeno);
+                    System.out.printf("2 - %dxNavio médio <=>%n", quantNavioMedio);
+                    System.out.printf("3 - %dxNavio grande <==>%n", quantNavioGrande);
+                    System.out.println("OBS: na hora de colocar um navio, será posto pela ponta, voltada para baixo ou para a direita.");
+
+                    System.out.printf("%nDigite qual tipo irá utilizar: ");
+                    tipo = scan.nextInt();
+                    if(tipo < 1 || tipo > 3 || quantNavioPequeno == 0 && tipo == 1 || quantNavioMedio == 0 && tipo == 2 || quantNavioGrande == 0 && tipo == 3) {
+                        repetir = 1;
+                    }
+                } while(repetir == 1);
+
+                //verifica se a pessoa vai escrever a direção corretamente
+                do {
+                    if(repetir == 1) {
+                        System.out.printf("%nVocê digitou uma direção inexistente! Tente novamente.%n");
+                    }
+                    repetir = 0;
+
+                    System.out.print("Digite a direção do navio (horizontal / vertical): ");
+                    direcao = scan.next();
+                    direcao = direcao.toLowerCase();
+
+                    if(!direcao.equals("horizontal") && !direcao.equals("vertical")) {
+                        repetir = 1;
+                    }
+                } while(repetir == 1);
+
+                //verifica se a pessoa escolheu um espaço suficiente para colocar o navio
+                do {
+                    if(repetir == 1) {
+                        System.out.printf("%nNão houve espaço para colocar o navio! Tente novamente.%n");
+                    }
+                    repetir = 0;
+
+                    //verifica se a pessoa escolheu uma casa que esteja dentro dos parâmetros da matriz int[5][10] jogador
+                    do {
+                        if(repetir == 1) {
+                            System.out.printf("%nVocê digitou uma casa inexistente! Tente novamente.%n");
+                        }
+                        repetir = 0;
+
+                        if(direcao.equals("horizontal")) {
+                            System.out.print("Linha (1 - 5): ");
+                            linha = scan.nextInt();
+
+                            System.out.printf("Coluna (%d - 10): ", 1 + tipo);
+                            coluna = scan.nextInt();
+
+                            if(linha < 1 || linha > 5 || coluna < 1 + tipo || coluna > 10) {
+                                repetir = 1;
+                            }
+                        } else {
+                            System.out.printf("Linha (%d - 5): ", 1 + tipo);
+                            linha = scan.nextInt();
+
+                            System.out.print("Coluna (1 - 10): ");
+                            coluna = scan.nextInt();
+
+                            if(linha < 1 + tipo || linha > 5 || coluna < 1 || coluna > 10) {
+                                repetir = 1;
+                            }
+                        }
+                    } while(repetir == 1);
+                    //transforma para poder utilizada diretamente na localização de um valor dentro da matriz
+                    linha--;
+                    coluna--;
+
+                    //verifica se será possivel preencher o local desejado
                     if(direcao.equals("horizontal")) {
-                        System.out.print("Linha (1 - 5): ");
-                        linha = scan.nextInt();
-
-                        System.out.printf("Coluna (%d - 10): ", 1 + tipo);
-                        coluna = scan.nextInt();
-
-                        if(linha < 1 || linha > 5 || coluna < 1 + tipo || coluna > 10) {
-                            repetir = 1;
+                        if(tipo == 1) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0) {
+                                jogador[linha][coluna] = 3;
+                                jogador[linha][coluna - 1] = 1;
+                                quantNavioPequeno--;
+                            } else {
+                                repetir = 1;
+                            }
+                        } else if(tipo == 2 && coluna > 1) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0) {
+                                jogador[linha][coluna] = 3;
+                                jogador[linha][coluna - 1] = 2;
+                                jogador[linha][coluna - 2] = 1;
+                                quantNavioMedio--;
+                            } else {
+                                repetir = 1;
+                            }
+                        } else if(tipo == 3 && coluna > 2) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0 && jogador[linha][coluna - 3] == 0) {
+                                jogador[linha][coluna] = 3;
+                                jogador[linha][coluna - 1] = 2;
+                                jogador[linha][coluna - 2] = 2;
+                                jogador[linha][coluna - 3] = 1;
+                                quantNavioGrande--;
+                            } else {
+                                repetir = 1;
+                            }
                         }
                     } else {
-                        System.out.printf("Linha (%d - 5): ", 1 + tipo);
-                        linha = scan.nextInt();
-
-                        System.out.print("Coluna (1 - 10): ");
-                        coluna = scan.nextInt();
-
-                        if(linha < 1 + tipo || linha > 5 || coluna < 1 || coluna > 10) {
-                            repetir = 1;
+                        if(tipo == 1) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0) {
+                                jogador[linha][coluna] = 6;
+                                jogador[linha - 1][coluna] = 4;
+                                quantNavioPequeno--;
+                            } else {
+                                repetir = 1;
+                            }
+                        } else if(tipo == 2 && linha > 1) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0) {
+                                jogador[linha][coluna] = 6;
+                                jogador[linha - 1][coluna] = 5;
+                                jogador[linha - 2][coluna] = 4;
+                                quantNavioMedio--;
+                            } else {
+                                repetir = 1;
+                            }
+                        } else if(tipo == 3 && linha > 2) {
+                            if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0 && jogador[linha - 3][coluna] == 0) {
+                                jogador[linha][coluna] = 6;
+                                jogador[linha - 1][coluna] = 5;
+                                jogador[linha - 2][coluna] = 5;
+                                jogador[linha - 3][coluna] = 4;
+                                quantNavioGrande--;
+                            } else {
+                                repetir = 1;
+                            }
                         }
                     }
                 } while(repetir == 1);
-                //transforma para poder utilizada diretamente na localização de um valor dentro da matriz
-                linha--;
-                coluna--;
-
-                //verifica se será possivel preencher o local desejado
-                if(direcao.equals("horizontal")) {
-                    if(tipo == 1) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0) {
-                            jogador[linha][coluna] = 3;
-                            jogador[linha][coluna - 1] = 1;
-                            quantNavioPequeno--;
-                        } else {
-                            repetir = 1;
-                        }
-                    } else if(tipo == 2 && coluna > 1) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0) {
-                            jogador[linha][coluna] = 3;
-                            jogador[linha][coluna - 1] = 2;
-                            jogador[linha][coluna - 2] = 1;
-                            quantNavioMedio--;
-                        } else {
-                            repetir = 1;
-                        }
-                    } else if(tipo == 3 && coluna > 2) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0 && jogador[linha][coluna - 3] == 0) {
-                            jogador[linha][coluna] = 3;
-                            jogador[linha][coluna - 1] = 2;
-                            jogador[linha][coluna - 2] = 2;
-                            jogador[linha][coluna - 3] = 1;
-                            quantNavioGrande--;
-                        } else {
-                            repetir = 1;
-                        }
-                    }
-                } else {
-                    if(tipo == 1) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0) {
-                            jogador[linha][coluna] = 6;
-                            jogador[linha - 1][coluna] = 4;
-                            quantNavioPequeno--;
-                        } else {
-                            repetir = 1;
-                        }
-                    } else if(tipo == 2 && linha > 1) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0) {
-                            jogador[linha][coluna] = 6;
-                            jogador[linha - 1][coluna] = 5;
-                            jogador[linha - 2][coluna] = 4;
-                            quantNavioMedio--;
-                        } else {
-                            repetir = 1;
-                        }
-                    } else if(tipo == 3 && linha > 2) {
-                        if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0 && jogador[linha - 3][coluna] == 0) {
-                            jogador[linha][coluna] = 6;
-                            jogador[linha - 1][coluna] = 5;
-                            jogador[linha - 2][coluna] = 5;
-                            jogador[linha - 3][coluna] = 4;
-                            quantNavioGrande--;
-                        } else {
-                            repetir = 1;
-                        }
-                    }
-                }
-            } while(repetir == 1);
-
-            leitura(jogador, pontuacao);
+            }
+        } else {
+            Criacao();
         }
 
         enemy.setGuerra(jogador);
@@ -240,6 +253,7 @@ public class BatalhaNaval {
 
             System.out.print("Inimigos");
             leitura(inimigo, enemy.getPontuacao());
+            System.out.println("linha: " + (enemy.ultimo[0] + 1) + " Coluna: " + (enemy.ultimo[1] + 1));
             System.out.printf("%nSeus Navios");
             leitura(enemy.getGuerra(), pontuacao);
 
@@ -321,6 +335,9 @@ public class BatalhaNaval {
 
     // verifica quem ganha a partir da quantidade de navios
     private int vitoria(int ponto1, int ponto2) {
+        // ponto1 - pontuação do jogador
+        // ponto2 - pontuação do inimigo
+
         int pontuacaoMax = 25;
 
         if(ponto1 == pontuacaoMax) {
@@ -329,6 +346,102 @@ public class BatalhaNaval {
             return 2;
         } else {
             return 0;
+        }
+    }
+
+    private void Criacao() {
+        Random random = new Random();
+
+        int direcao;
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 10; j++) {
+                jogador[i][j] = 0;
+            }
+        }
+
+        while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0 || repetir == 1) {
+            do {
+                repetir = 0;
+
+                tipo = random.nextInt(3) + 1;
+                // 1 - <> / 2 - <=> / 3 - <==>
+
+                if(tipo == 1 && quantNavioPequeno == 0 || tipo == 2 && quantNavioMedio == 0 || tipo == 3 && quantNavioGrande == 0) {
+                    repetir = 1;
+                }
+            } while(repetir == 1);
+
+            direcao = random.nextInt(2);
+            // 0 - Horizontal / 1 - Vertical
+
+            if(direcao == 0) {
+                linha = random.nextInt(5);
+                coluna = random.nextInt(10 - tipo) + tipo;
+            } else {
+                linha = random.nextInt(5 - tipo) + tipo;
+                coluna = random.nextInt(10);
+            }
+
+            if(direcao == 0) {
+                if(tipo == 1) {
+                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0) {
+                        jogador[linha][coluna] = 3;
+                        jogador[linha][coluna - 1] = 1;
+                        quantNavioPequeno--;
+                    } else {
+                        repetir = 1;
+                    }
+                } else if(tipo == 2) {
+                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0) {
+                        jogador[linha][coluna] = 3;
+                        jogador[linha][coluna - 1] = 2;
+                        jogador[linha][coluna - 2] = 1;
+                        quantNavioMedio--;
+                    } else {
+                        repetir = 1;
+                    }
+                } else {
+                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0 && jogador[linha][coluna - 3] == 0) {
+                        jogador[linha][coluna] = 3;
+                        jogador[linha][coluna - 1] = 2;
+                        jogador[linha][coluna - 2] = 2;
+                        jogador[linha][coluna - 3] = 1;
+                        quantNavioGrande--;
+                    } else {
+                        repetir = 1;
+                    }
+                }
+            } else {
+                if(tipo == 1) {
+                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0) {
+                        jogador[linha][coluna] = 6;
+                        jogador[linha - 1][coluna] = 4;
+                        quantNavioPequeno--;
+                    } else {
+                        repetir = 1;
+                    }
+                } else if(tipo == 2) {
+                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0) {
+                        jogador[linha][coluna] = 6;
+                        jogador[linha - 1][coluna] = 5;
+                        jogador[linha - 2][coluna] = 4;
+                        quantNavioMedio--;
+                    } else {
+                        repetir = 1;
+                    }
+                } else {
+                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0 && jogador[linha - 3][coluna] == 0) {
+                        jogador[linha][coluna] = 6;
+                        jogador[linha - 1][coluna] = 5;
+                        jogador[linha - 2][coluna] = 5;
+                        jogador[linha - 3][coluna] = 4;
+                        quantNavioGrande--;
+                    } else {
+                        repetir = 1;
+                    }
+                }
+            }
         }
     }
 }

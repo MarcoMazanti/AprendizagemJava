@@ -8,7 +8,7 @@ public class Jogo {
     public void jogoDaVelha() {
         Scanner scan = new Scanner(System.in);
 
-        int vitoria, coluna = 0, linha = 0, jogador = 0, tamanho = 3;
+        int win, coluna = 0, linha = 0, jogador = 0, tamanho = 3;
 
         System.out.println();
         do {
@@ -83,40 +83,60 @@ public class Jogo {
 
             jogo[linha][coluna] = jogador;
             mapa[2 * linha][2 * coluna] = jogador;
-            vitoria = vitoria(jogo, jogador);
-        } while(vitoria != 1);
+            win = vitoria(jogo, linha, coluna, jogador);
+        } while(win != 1 && win != 2 && win != 3);
 
         leitura(mapa);
         System.out.printf("O jogador %d venceu!!!%n", jogador);
     }
 
-    private int vitoria(int[][] jogo, int jogador) {
-        int vitoria = 0, horizontal = 0, vertical = 0, diagonalPrincipal = 0, diagonalSecundaria = 0;
-
+    private int vitoria(int[][] jogo, int linha, int coluna, int jogador) {
+        int vitoria = 0, horizontal = 0, vertical = 0, diagonalPrincipal = 0, diagonalSecundario = 0;
 
         for(i = 0; i < jogo.length; i++) {
-            for(j = 0; j < jogo.length; j++) {
-                if(jogo[j][i] == jogador) {
-                    horizontal++;
-                }
-                if(jogo[i][j] == jogador) {
-                    vertical++;
-                }
-                if(i == j && jogo[i][i] == jogador) {
-                    diagonalPrincipal++;
-                }
-                if(i + j == jogo.length + 1 && jogo[i][j] == jogador) {
-                    diagonalSecundaria++;
-                }
+            if(jogo[linha][i] == jogador) {
+                horizontal++;
             }
-            if(horizontal == jogo.length || vertical == jogo.length || diagonalPrincipal == jogo.length || diagonalSecundaria == jogo.length) {
+            if(jogo[i][coluna] == jogador) {
+                vertical++;
+            }
+        }
+
+        for(i = 0; i < jogo.length; i++) {
+           for(j = 0; j < jogo[i].length; j++) {
+               if(i == j && jogo[i][j] == jogador) {
+                   diagonalPrincipal++;
+               }
+               if(i + j + 1 == jogo.length && jogo[i][j] == jogador) {
+                   diagonalSecundario++;
+               }
+           }
+        }
+
+        if(horizontal == jogo.length) {
+            if(jogador == 1) {
                 vitoria = 1;
-                break;
+            } else if(jogador == 2) {
+                vitoria = 2;
             }
-            horizontal = 0;
-            vertical = 0;
-            diagonalPrincipal = 0;
-            diagonalSecundaria = 0;
+        } else if(vertical == jogo.length) {
+            if(jogador == 1) {
+                vitoria = 1;
+            } else if(jogador == 2) {
+                vitoria = 2;
+            }
+        } else if(diagonalPrincipal == jogo.length) {
+            if(jogador == 1) {
+                vitoria = 1;
+            } else if(jogador == 2) {
+                vitoria = 2;
+            }
+        } else if(diagonalSecundario == jogo.length) {
+            if(jogador == 1) {
+                vitoria = 1;
+            } else if(jogador == 2) {
+                vitoria = 2;
+            }
         }
 
         return vitoria;
