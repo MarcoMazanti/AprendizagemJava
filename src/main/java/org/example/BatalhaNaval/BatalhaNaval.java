@@ -1,24 +1,24 @@
 package org.example.BatalhaNaval;
 
-import java.util.Random;
 import java.util.Scanner;
 
 public class BatalhaNaval {
     private int i = 0, j = 0;
 
-    private int[][] jogador = new int[5][10]; // o que vai aparecer na tela
-    private int linha, coluna, tipo, quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2, repetir = 0;
+    private int quantNavioPequeno = 4, quantNavioMedio = 3, quantNavioGrande = 2;
 
     public void batalhaNaval() {
         Scanner scan = new Scanner(System.in);
         Inimigo enemy = new Inimigo();
-        enemy.Criacao();
+        Criacao criacao = new Criacao();
+        Bot bot = new Bot();
 
         String direcao, response;
-        int pontuacao = 0, vitoria = 0, dificuldade;
+        int[][] jogador = new int[5][10]; // o que vai aparecer na tela
+        int pontuacao = 0, vitoria = 0, dificuldade, linha, coluna, tipo, repetir;
 
         int[][] inimigo = new int[5][10]; // o que vai aparecer na tela o local de acertos
-        int[][] guerra = enemy.getInimigo(); // apenas para conferir se acertou um local permitido
+        int[][] guerra = bot.getInimigo(); // apenas para conferir se acertou um local permitido
 
         for(i = 0; i < 5; i++) {
             for(j = 0; j < 10; j++) {
@@ -26,17 +26,29 @@ public class BatalhaNaval {
             }
         }
 
-        leitura(enemy.getInimigo(), enemy.getPontuacao());
+        // garantir que escolha uma dificuldade existente
+        do {
+            repetir = 0;
 
-        System.out.println("DIFICULDADE");
-        System.out.println("1 - Fácil");
-        System.out.println("2 - Médio");
-        System.out.println("3 - Dificil");
-        System.out.println("OBS: Dificuldade 3 em desenvolvimento!");
-        System.out.print("Digite a dificuldade: ");
-        dificuldade = scan.nextInt();
-        System.out.println();
+            System.out.println("DIFICULDADE");
+            System.out.println("1 - Fácil");
+            System.out.println("2 - Médio");
+            System.out.println("3 - Dificil");
+            System.out.println("OBS: Dificuldade 3 em desenvolvimento!");
+            System.out.print("Digite a dificuldade: ");
+            dificuldade = scan.nextInt();
+            System.out.println();
 
+            if(dificuldade < 1 || dificuldade > 3) {
+                System.out.println("Você digitiu uma dificuldade inexistente! Tente novamente.");
+                repetir = 1;
+            }
+        } while(repetir == 1);
+
+        // cria o mapa do inimigo
+        bot.criar();
+
+        // garante que a resposta será sim ou não
         do {
             repetir = 0;
             System.out.print("Deseja colocar manualmente os navios (sim/nao): ");
@@ -50,6 +62,7 @@ public class BatalhaNaval {
             }
         } while(repetir == 1);
 
+        // criação do mapa do jogador
         if(response.equals("sim")) {
             //roda até a pessoa colocar todos os navios
             while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0) {
@@ -192,17 +205,18 @@ public class BatalhaNaval {
                 } while(repetir == 1);
             }
         } else {
-            Criacao();
+            criacao.criar(jogador);
         }
 
         enemy.setGuerra(jogador);
 
+        // se inicia o jogo
         System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
 
         System.out.print("Inimigos");
-        leitura(inimigo, enemy.getPontuacao());
+        leitura(inimigo, bot.getPontuacao());
         System.out.printf("%nSeus Navios");
-        leitura(jogador, pontuacao);
+        leitura(guerra, pontuacao);
 
         while(vitoria == 0) {
             System.out.println("Digite o local onde deseja atacar: ");
@@ -251,12 +265,21 @@ public class BatalhaNaval {
             // inimigo ataca
             enemy.Enemy(dificuldade);
 
+            int[][] teste = enemy.getGuerra();
+            for(i = 0; i < 5; i++) {
+                for(j = 0; j < 10; j++) {
+                    System.out.printf("%2d", teste[i][j]);
+                }
+                System.out.println();
+            }
+
             System.out.print("Inimigos");
-            leitura(inimigo, enemy.getPontuacao());
+            leitura(inimigo, bot.getPontuacao());
             System.out.printf("%nSeus Navios");
             leitura(enemy.getGuerra(), pontuacao);
 
-            vitoria = vitoria(pontuacao, enemy.getPontuacao());
+
+            vitoria = vitoria(pontuacao, bot.getPontuacao());
             if(vitoria == 1) {
                 System.out.println("VOCÊ GANHOU!!!");
             } else if(vitoria == 2) {
@@ -289,12 +312,6 @@ public class BatalhaNaval {
                         case 6 -> 'v';
                         case 7 -> '¤';
                         case 8 -> '•';
-                        case 11 -> '◄';
-                        case 12 -> '▬';
-                        case 13 -> '►';
-                        case 14 -> '▲';
-                        case 15 -> '█';
-                        case 16 -> '▼';
                         default -> caractere;
                     };
                     System.out.printf(" %c ", caractere);
@@ -310,9 +327,6 @@ public class BatalhaNaval {
         0 - " "
         7 - "¤" alt + 0164 para acertos no barco
         8 - "•" alt + 0149 para acertos na água
-        21 - "<>" barco pequeno
-        22 - "<=>" barco médio
-        23 - "<==>" barco grande
 
         barcos
         1 - "<"
@@ -321,14 +335,9 @@ public class BatalhaNaval {
         4 - "^" alt + 94
         5 - "║" alt + 186
         6 - "v"
-
-        barcos explodidos
-        11 - "◄" alt + 17
-        12 - "▬" alt + 22
-        13 - "►" alt + 16
-        14 - "▲" alt + 30
-        15 - "█" alt + 219
-        16 - "▼" alt + 31
+        "<>" - barco pequeno
+        "<=>" - barco médio
+        "<==>" - barco grande
          */
     }
 
@@ -345,102 +354,6 @@ public class BatalhaNaval {
             return 2;
         } else {
             return 0;
-        }
-    }
-
-    private void Criacao() {
-        Random random = new Random();
-
-        int direcao;
-
-        for(int i = 0; i < 5; i++) {
-            for(int j = 0; j < 10; j++) {
-                jogador[i][j] = 0;
-            }
-        }
-
-        while(quantNavioPequeno > 0 || quantNavioMedio > 0 || quantNavioGrande > 0 || repetir == 1) {
-            do {
-                repetir = 0;
-
-                tipo = random.nextInt(3) + 1;
-                // 1 - <> / 2 - <=> / 3 - <==>
-
-                if(tipo == 1 && quantNavioPequeno == 0 || tipo == 2 && quantNavioMedio == 0 || tipo == 3 && quantNavioGrande == 0) {
-                    repetir = 1;
-                }
-            } while(repetir == 1);
-
-            direcao = random.nextInt(2);
-            // 0 - Horizontal / 1 - Vertical
-
-            if(direcao == 0) {
-                linha = random.nextInt(5);
-                coluna = random.nextInt(10 - tipo) + tipo;
-            } else {
-                linha = random.nextInt(5 - tipo) + tipo;
-                coluna = random.nextInt(10);
-            }
-
-            if(direcao == 0) {
-                if(tipo == 1) {
-                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0) {
-                        jogador[linha][coluna] = 3;
-                        jogador[linha][coluna - 1] = 1;
-                        quantNavioPequeno--;
-                    } else {
-                        repetir = 1;
-                    }
-                } else if(tipo == 2) {
-                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0) {
-                        jogador[linha][coluna] = 3;
-                        jogador[linha][coluna - 1] = 2;
-                        jogador[linha][coluna - 2] = 1;
-                        quantNavioMedio--;
-                    } else {
-                        repetir = 1;
-                    }
-                } else {
-                    if(jogador[linha][coluna] == 0 && jogador[linha][coluna - 1] == 0 && jogador[linha][coluna - 2] == 0 && jogador[linha][coluna - 3] == 0) {
-                        jogador[linha][coluna] = 3;
-                        jogador[linha][coluna - 1] = 2;
-                        jogador[linha][coluna - 2] = 2;
-                        jogador[linha][coluna - 3] = 1;
-                        quantNavioGrande--;
-                    } else {
-                        repetir = 1;
-                    }
-                }
-            } else {
-                if(tipo == 1) {
-                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0) {
-                        jogador[linha][coluna] = 6;
-                        jogador[linha - 1][coluna] = 4;
-                        quantNavioPequeno--;
-                    } else {
-                        repetir = 1;
-                    }
-                } else if(tipo == 2) {
-                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0) {
-                        jogador[linha][coluna] = 6;
-                        jogador[linha - 1][coluna] = 5;
-                        jogador[linha - 2][coluna] = 4;
-                        quantNavioMedio--;
-                    } else {
-                        repetir = 1;
-                    }
-                } else {
-                    if(jogador[linha][coluna] == 0 && jogador[linha - 1][coluna] == 0 && jogador[linha - 2][coluna] == 0 && jogador[linha - 3][coluna] == 0) {
-                        jogador[linha][coluna] = 6;
-                        jogador[linha - 1][coluna] = 5;
-                        jogador[linha - 2][coluna] = 5;
-                        jogador[linha - 3][coluna] = 4;
-                        quantNavioGrande--;
-                    } else {
-                        repetir = 1;
-                    }
-                }
-            }
         }
     }
 }
