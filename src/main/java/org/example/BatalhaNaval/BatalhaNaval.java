@@ -209,6 +209,7 @@ public class BatalhaNaval {
         }
 
         enemy.setGuerra(jogador);
+        System.out.println("Passou geral");
 
         // se inicia o jogo
         System.out.println("Agora ache os navios inimigos antes de que o inimigo faça isso!");
@@ -264,14 +265,6 @@ public class BatalhaNaval {
 
             // inimigo ataca
             enemy.Enemy(dificuldade);
-
-            int[][] teste = enemy.getGuerra();
-            for(i = 0; i < 5; i++) {
-                for(j = 0; j < 10; j++) {
-                    System.out.printf("%2d", teste[i][j]);
-                }
-                System.out.println();
-            }
 
             System.out.print("Inimigos");
             leitura(inimigo, bot.getPontuacao());

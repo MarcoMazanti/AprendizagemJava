@@ -3,8 +3,8 @@ package org.example.BatalhaNaval;
 import java.util.Random;
 
 abstract class ModelBot {
-    public abstract void acertar();
-    public abstract void verificar(int linha, int coluna);
+    public abstract void acertar(int[][] gurerra);
+    public abstract void verificar(int linha, int coluna, int[][] guerra);
     public abstract void criar();
 }
 
@@ -15,7 +15,7 @@ class Bot extends ModelBot {
 
     protected int[][] inimigo = new int[5][10]; // Local para os navios do bot
     protected int[] ultimo = new int[2];
-    protected int repetir = 0, pontuacao = 0, i, j, linha, coluna, inicio = 1;
+    protected int repetir = 0, pontuacao = 0, linha, coluna, inicio = 1, a = 0, b = 0, c = 0, d = 0;
 
     public int[][] getInimigo() {
         return inimigo;
@@ -26,30 +26,26 @@ class Bot extends ModelBot {
     }
 
     @Override
-    public void acertar() {}
+    public void acertar(int[][] guerra) {}
 
     @Override
-    public void verificar(int linha, int coluna) {
-        int[][] guerra = enemy.getGuerra();
+    public void verificar(int linha, int coluna, int[][] guerra) {
+        repetir = 0;
 
-        // entra mas não altera o valor no enemy.setGuerra(guerra);
         if (guerra[linha][coluna] == 0) {
             guerra[linha][coluna] = 8;
-            System.out.println("Entrou 8");
         } else if (guerra[linha][coluna] >= 1 && guerra[linha][coluna] <= 6) {
             guerra[linha][coluna] = 7;
-            System.out.println("Entrou 7");
             pontuacao++;
         } else if (guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
             repetir = 1;
         }
-
-        enemy.setGuerra(guerra);
     }
 
     @Override
     public void criar() {
         criacao.criar(inimigo);
+        inicio();
     }
 
     public void inicio() {
@@ -62,57 +58,59 @@ class Bot extends ModelBot {
 }
 
 class BotFacil extends Bot {
-    public BotFacil() {
-        acertar();
+    public BotFacil(int[][] guerra) {
+        acertar(guerra);
     }
 
     @Override
-    public void acertar() {
+    public void acertar(int[][] guerra) {
         do {
             repetir = 0;
             linha = random.nextInt(5);
             coluna = random.nextInt(10);
-            verificar(linha, coluna);
+            verificar(linha, coluna, guerra);
         } while (repetir == 1);
     }
 }
 
 class BotMedio extends Bot {
-    int[][] guerra = enemy.getGuerra();
-    public BotMedio() {
-        acertar();
+    public BotMedio(int[][] guerra) {
+        acertar(guerra);
     }
 
     @Override
-    public void acertar() {
-        inicio();
+    public void acertar(int[][] guerra) {
         do {
             repetir = 0;
 
             if ((ultimo[0] < 0 && ultimo[1] < 0) || (ultimo[0] > 4 && ultimo[1] > 9)) {
                 linha = random.nextInt(5);
                 coluna = random.nextInt(10);
-                verificar(linha, coluna);
+                verificar(linha, coluna, guerra);
             } else {
-                if (ultimo[0] - 1 >= 0) {
-                    verificar(ultimo[0] - 1, ultimo[1]);
-                } else if (ultimo[1] - 1 >= 0) {
-                    verificar(ultimo[0], ultimo[1] - 1);
-                } else if (ultimo[1] + 1 <= 9) {
-                    verificar(ultimo[0], ultimo[1] + 1);
-                } else if (ultimo[0] + 1 <= 4) {
-                    verificar(ultimo[0] + 1, ultimo[1]);
+                if (ultimo[0] - 1 >= 0 && a == 0) {
+                    verificar(ultimo[0] - 1, ultimo[1], guerra);
+                } else if (ultimo[1] - 1 >= 0 && b == 0) {
+                    verificar(ultimo[0], ultimo[1] - 1, guerra);
+                } else if (ultimo[1] + 1 <= 9 && c == 0) {
+                    verificar(ultimo[0], ultimo[1] + 1, guerra);
+                } else if (ultimo[0] + 1 <= 4 && d == 0) {
+                    verificar(ultimo[0] + 1, ultimo[1], guerra);
                 } else {
                     ultimo[0] = -1;
                     ultimo[1] = -1;
                     repetir = 1;
+                    a = 0;
+                    b = 0;
+                    c = 0;
+                    d = 0;
                 }
             }
         } while (repetir == 1);
     }
 
     @Override
-    public void verificar(int linha, int coluna) {
+    public void verificar(int linha, int coluna, int[][] guerra) {
         if (guerra[linha][coluna] == 0) {
             guerra[linha][coluna] = 8;
         } else if (guerra[linha][coluna] >= 1 && guerra[linha][coluna] <= 6) {
@@ -120,40 +118,42 @@ class BotMedio extends Bot {
             ultimo[0] = linha;
             ultimo[1] = coluna;
             pontuacao++;
+            a = 0;
+            b = 0;
+            c = 0;
+            d = 0;
         } else if (guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
             repetir = 1;
+            System.out.println("Repetiu");
         }
-
-        enemy.setGuerra(guerra);
+        System.out.println(ultimo[0] + " " + ultimo[1]);
+        System.out.println(a + " " + b + " " + c + " " + d);
     }
 }
 
 class BotDificil extends Bot {
-    int[][] guerra = enemy.getGuerra();
-
-    public BotDificil() {
-        acertar();
+    public BotDificil(int[][] guerra) {
+        acertar(guerra);
     }
 
     @Override
-    public void acertar() {
-        inicio();
+    public void acertar(int[][] guerra) {
         do {
             repetir = 0;
 
             if ((ultimo[0] < 0 && ultimo[1] < 0) || (ultimo[0] > 4 && ultimo[1] > 9)) {
                 linha = random.nextInt(5);
                 coluna = random.nextInt(10);
-                verificar(linha, coluna);
+                verificar(linha, coluna, guerra);
             } else {
                 if (ultimo[0] - 1 >= 0) {
-                    verificar(ultimo[0] - 1, ultimo[1]);
+                    verificar(ultimo[0] - 1, ultimo[1], guerra);
                 } else if (ultimo[1] - 1 >= 0) {
-                    verificar(ultimo[0], ultimo[1] - 1);
+                    verificar(ultimo[0], ultimo[1] - 1, guerra);
                 } else if (ultimo[1] + 1 <= 9) {
-                    verificar(ultimo[0], ultimo[1] + 1);
+                    verificar(ultimo[0], ultimo[1] + 1, guerra);
                 } else if (ultimo[0] + 1 <= 4) {
-                    verificar(ultimo[0] + 1, ultimo[1]);
+                    verificar(ultimo[0] + 1, ultimo[1], guerra);
                 } else {
                     proximaCasa();
                 }
@@ -166,7 +166,7 @@ class BotDificil extends Bot {
     }
 
     @Override
-    public void verificar(int linha, int coluna) {
+    public void verificar(int linha, int coluna, int[][] guerra) {
         if (guerra[linha][coluna] == 0) {
             guerra[linha][coluna] = 8;
         } else if (guerra[linha][coluna] >= 1 && guerra[linha][coluna] <= 6) {
@@ -177,8 +177,6 @@ class BotDificil extends Bot {
         } else if (guerra[linha][coluna] == 7 || guerra[linha][coluna] == 8) {
             repetir = 1;
         }
-
-        enemy.setGuerra(guerra);
     }
 }
 
@@ -194,22 +192,11 @@ public class Inimigo {
     }
 
     public void Enemy(int dificuldade) {
-        Bot bot;
-
-        switch (dificuldade) {
-            case 1:
-                bot = new BotFacil();
-                break;
-            case 2:
-                bot = new BotMedio();
-                break;
-            case 3:
-                bot = new BotDificil();
-                break;
-            default:
-                throw new IllegalArgumentException("Dificuldade inválida");
-        }
-
-        bot.acertar();
+        Bot bot = switch (dificuldade) {
+            case 1 -> new BotFacil(guerra);
+            case 2 -> new BotMedio(guerra);
+            case 3 -> new BotDificil(guerra);
+            default -> throw new IllegalArgumentException("Dificuldade inválida");
+        };
     }
 }
